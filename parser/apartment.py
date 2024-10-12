@@ -7,6 +7,8 @@ class Apartment:
         self.district = district
         self.price = price
 
-    def __repr__(self):
-        return f"title: {self.title}\ncity: {self.city}\ndistrict: {self.district}\nprice: {self.price}" \
+    def __str__(self):
+        return f"\ntitle: {self.title}\ncity: {self.city}\ndistrict: {self.district}\nprice: {self.price}" \
                f"\nrooms: {self.rooms}"
+
+    __repr__ = __str__
