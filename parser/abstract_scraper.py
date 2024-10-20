@@ -8,9 +8,6 @@ from typing import Any, Optional
 class AbstractScraper(ABC):
     ApartmentPageData = Any
 
-    logging.basicConfig(level=logging.INFO, filename="scraper_log.log", filemode="w",
-                        format="%(asctime)s %(levelname)s %(message)s")
-
     @abstractmethod
     def fetch_apartment_listings(self, page_content) -> list[ApartmentPageData]:
         pass
@@ -63,6 +60,5 @@ class AbstractScraper(ABC):
 
             apartment_obj = Apartment(title, link_to_apartment, rooms, city, district, price)
             apartments_data.append(apartment_obj)
-            logging.info(f"Appartment object was added successfully: {apartment_obj}\n")
 
         return apartments_data

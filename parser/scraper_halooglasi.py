@@ -8,9 +8,6 @@ import logging
 class HalooglasiScraper(AbstractScraper):
     BASE_URL = 'https://www.halooglasi.com/nekretnine/izdavanje-stanova'
 
-    logging.basicConfig(level=logging.INFO, filename="scraper_log.log", filemode="w",
-                        format="%(asctime)s %(levelname)s %(message)s")
-
     def fetch_apartment_listings(self, page_content) -> list[AbstractScraper.ApartmentPageData]:
         soup = BeautifulSoup(page_content.content, 'lxml')
         return soup.find_all('div', class_='col-md-12 col-sm-12 col-xs-12 col-lg-12')
