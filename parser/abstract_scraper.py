@@ -1,12 +1,12 @@
 import logging
 from abc import ABC, abstractmethod
-from parser.parser_exceptions import ApartmentLinkNotFoundException, ApartmentTitleNotFoundException
 from parser.apartment import Apartment
 from typing import Any, Optional
 
+ApartmentPageData = Any
+
 
 class AbstractScraper(ABC):
-    ApartmentPageData = Any
 
     @abstractmethod
     def fetch_apartment_listings(self, page_content) -> list[ApartmentPageData]:
@@ -46,11 +46,11 @@ class AbstractScraper(ABC):
         """
         apartments_data = []
         for apartment in apartment_listings:
-            try:
-                title = self.get_apartment_title(apartment)
-                link_to_apartment = self.get_apartment_link(apartment)
-            except (ApartmentTitleNotFoundException, ApartmentLinkNotFoundException) as e:
-                logging.error(f"Skipping apartment due to missing critical data: {e}")
+            title = self.get_apartment_title(apartment)
+            link_to_apartment = self.get_apartment_link(apartment)
+
+            if not title or not link_to_apartment:
+                logging.error(f"Skipping apartment due to missing critical data: {title}, {link_to_apartment}")
                 continue
 
             city = self.get_apartment_city(apartment)
