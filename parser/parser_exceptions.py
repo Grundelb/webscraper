@@ -1,0 +1,2 @@
+class ApartmentParseError(Exception):
+    pass
