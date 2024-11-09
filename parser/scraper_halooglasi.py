@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from parser.abstract_scraper import AbstractScraper, ApartmentPageData
 from parser.parser_exceptions import ApartmentParseError
 from typing import Optional
-from parser.utility import suppress
+from utility import suppress
 
 
 class HalooglasiScraper(AbstractScraper):

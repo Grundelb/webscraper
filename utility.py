@@ -1,12 +1,21 @@
 import json
 import logging
+import os
 
 
-def save_list_of_apartments(apartments: list, file_path: str) -> None:
+APARTMENT_FILE_PATH = os.path.relpath("apartment_data.json")
+
+
+def save_list_of_apartments(apartments: list) -> None:
     """Save an apartment list into a json file."""
 
-    with open(file_path, mode="a") as json_file:
-        json_file.write(json.dumps(apartments, indent=4))
+    with open(APARTMENT_FILE_PATH, mode="w") as afp:
+        json.dump(apartments, afp)
+
+
+def get_all_apartments() -> list[dict]:
+    with open(APARTMENT_FILE_PATH, encoding="utf-8") as afp:
+        return json.load(afp)
 
 
 def suppress(exception: Exception, error_msg: str):
@@ -24,5 +33,3 @@ def suppress(exception: Exception, error_msg: str):
         return new_func
 
     return decorator
-
-

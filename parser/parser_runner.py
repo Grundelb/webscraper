@@ -1,11 +1,11 @@
 from parser.network_connector import NetworkConnector
 from parser.scraper_halooglasi import HalooglasiScraper
-from parser.utility import save_list_of_apartments
+from utility import save_list_of_apartments
 from dataclasses import asdict
 import logging
 
 
-def main():
+def execute_parser():
     logging.basicConfig(level=logging.INFO, filename="scraper_log.log", filemode="w",
                         format="%(asctime)s %(levelname)s %(message)s")
     page_number = 1
@@ -32,10 +32,8 @@ def main():
         else:
             break
 
-    save_list_of_apartments(apartment_list, "apartment_data.json")
+    save_list_of_apartments(apartment_list)
     logging.info(f"Apartments added: {len(apartment_list)}")
     logging.info("Execution completed")
 
-
-if __name__ == "__main__":
-    main()
+execute_parser()
