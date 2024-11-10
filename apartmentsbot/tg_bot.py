@@ -40,7 +40,7 @@ def start_filter_get_city(message: types.Message, state: StateContext):
     state.set(MyStates.city)
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    cities = ["Novi Sad", "Belgrade"]
+    cities = ["Novi Sad", "Beograd"]
     buttons = [types.KeyboardButton(city) for city in cities]
     keyboard.add(*buttons)
 
@@ -63,7 +63,7 @@ def any_state(message: types.Message, state: StateContext):
     )
 
 
-@bot.message_handler(state=MyStates.city, text=["Novi Sad", "Belgrade"])
+@bot.message_handler(state=MyStates.city, text=["Novi Sad", "Beograd"])
 def min_price_get(message: types.Message, state: StateContext):
     state.set(MyStates.min_price)
     bot.send_message(
@@ -128,7 +128,9 @@ def send_apartments(message: types.Message, state: StateContext):
         rooms = int(data.get("rooms"))
 
     logging.info(f"Filters set to: city={city}, min_price={min_price}, max_price={max_price}, rooms={rooms}")
-    apartment_batches = FilterApartments.execute_filter(city, min_price, max_price, rooms)
+
+    apartment_filter = FilterApartments()
+    apartment_batches = apartment_filter.execute_filter(city, min_price, max_price, rooms)
 
     for batch in apartment_batches:
         for apartment in batch:

@@ -3,8 +3,7 @@ from utility import get_all_apartments
 
 class FilterApartments:
 
-    @staticmethod
-    def _prepare_data_for_filtering(apartments):
+    def _prepare_data_for_filtering(self, apartments):
         prepared_apartments = []
         for apartment in apartments:
             try:
@@ -27,21 +26,18 @@ class FilterApartments:
 
         return prepared_apartments
 
-    @staticmethod
-    def _filter_apartments(city, min_price, max_price, rooms, apartments):
+    def _filter_apartments(self, city, min_price, max_price, rooms, apartments):
         return list(filter(lambda apartment: apartment['city'] == city
                                              and apartment['rooms'] == rooms
                                              and min_price <= apartment['price'] <= max_price,
                            apartments))
 
-    @staticmethod
-    def _lazy_load_apartments(apartments, batch_size=10):
+    def lazy_load_apartments(self, apartments, batch_size=10):
         for i in range(0, len(apartments), batch_size):
             yield apartments[i:i + batch_size]
 
-    @staticmethod
-    def execute_filter(city, min_price, max_price, rooms):
+    def execute_filter(self, city, min_price, max_price, rooms):
         apartments = get_all_apartments()
-        cleared_apartments = FilterApartments._prepare_data_for_filtering(apartments)
-        filtered_apartments = FilterApartments._filter_apartments(city, min_price, max_price, rooms, cleared_apartments)
-        return FilterApartments._lazy_load_apartments(filtered_apartments)
+        cleared_apartments = self._prepare_data_for_filtering(apartments)
+        filtered_apartments = self._filter_apartments(city, min_price, max_price, rooms, cleared_apartments)
+        return self.lazy_load_apartments(filtered_apartments)
