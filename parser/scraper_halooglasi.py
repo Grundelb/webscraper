@@ -6,7 +6,8 @@ from utility import suppress
 
 
 class HalooglasiScraper(AbstractScraper):
-    BASE_URL = 'https://www.halooglasi.com/nekretnine/izdavanje-stanova'
+    SEARCH_URL = 'https://www.halooglasi.com/nekretnine/izdavanje-stanova'
+    BASE_URL = 'https://www.halooglasi.com'
 
     def fetch_apartment_listings(self, page_content) -> list[ApartmentPageData]:
         soup = BeautifulSoup(page_content.content, 'lxml')

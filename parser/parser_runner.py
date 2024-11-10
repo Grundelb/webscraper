@@ -10,10 +10,10 @@ def execute_parser():
                         format="%(asctime)s %(levelname)s %(message)s")
     page_number = 1
     scraper = HalooglasiScraper()
-    connector = NetworkConnector(HalooglasiScraper.BASE_URL)
+    connector = NetworkConnector(HalooglasiScraper.SEARCH_URL)
     apartment_list = []
     logging.info("Execution started")
-    logging.info(f"URL: {HalooglasiScraper.BASE_URL}")
+    logging.info(f"URL: {HalooglasiScraper.SEARCH_URL}")
     while True:
         logging.info(f"Page number: {page_number}\n")
         response = connector.load_listing_page(page_number)

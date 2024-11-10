@@ -86,7 +86,6 @@ def max_price_get(message: types.Message, state: StateContext):
 @bot.message_handler(state=MyStates.max_price, is_digit=True)
 def rooms_number_get(message: types.Message, state: StateContext):
     state.set(MyStates.rooms)
-    state.add_data(max_price=message.text)
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     rooms_number = ["1", "2", "3", "4"]
@@ -99,6 +98,7 @@ def rooms_number_get(message: types.Message, state: StateContext):
         reply_markup=keyboard,
         reply_parameters=ReplyParameters(message_id=message.message_id),
     )
+    state.add_data(max_price=message.text)
 
 
 @bot.message_handler(
@@ -116,33 +116,38 @@ def filter_finish(message: types.Message, state: StateContext):
         reply_markup=keyboard,
         reply_parameters=ReplyParameters(message_id=message.message_id),
     )
+    state.add_data(rooms=message.text)
 
 
-@bot.message_handler(state=MyStates.rooms)
+@bot.message_handler(state=MyStates.next_data)
 def send_apartments(message: types.Message, state: StateContext):
     with state.data() as data:
         city = data.get("city")
-        min_price = data.get("min_price")
-        max_price = data.get("max_price")
-        rooms = message.text
+        min_price = int(data.get("min_price"))
+        max_price = int(data.get("max_price"))
+        rooms = int(data.get("rooms"))
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add("GET APARTMENTS")
+    logging.info(f"Filters set to: city={city}, min_price={min_price}, max_price={max_price}, rooms={rooms}")
+    apartment_batches = FilterApartments.execute_filter(city, min_price, max_price, rooms)
 
-    for batch in FilterApartments.execute_filter(data):
+    for batch in apartment_batches:
         for apartment in batch:
             bot.send_message(
                 message.chat.id,
-                f"{apartment}",
-                reply_markup=keyboard,
-                reply_parameters=ReplyParameters(message_id=message.message_id),
+                f"Title: {apartment['title']}\n"
+                f"City: {apartment['city']}\n"
+                f"District: {apartment['district']}\n"
+                f"Price: {apartment['price']} EUR\n"
+                f"Rooms: {apartment['rooms']}\n"
+                f"Link: {apartment['link']}"
             )
-    bot.send_message(
-        message.chat.id,
-        f"GET MORE",
-        reply_markup=keyboard,
-        reply_parameters=ReplyParameters(message_id=message.message_id),
-    )
+        # Wait for user to request the next batch
+        bot.send_message(
+            message.chat.id,
+            "Type 'GET MORE' to see the next batch.",
+            reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).add("GET MORE")
+        )
+        break
 
 
 @bot.message_handler(state=[MyStates.max_price, MyStates.min_price], is_digit=False)
