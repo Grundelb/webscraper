@@ -7,10 +7,21 @@ APARTMENT_FILE_PATH = os.path.relpath("apartment_data.json")
 
 
 def save_list_of_apartments(apartments: list) -> None:
-    """Save an apartment list into a json file."""
+    """Save an apartment list into a JSON file by appending to an existing list."""
+
+    if os.path.exists(APARTMENT_FILE_PATH):
+        with open(APARTMENT_FILE_PATH, mode="r") as afp:
+            try:
+                existing_data = json.load(afp)
+            except json.JSONDecodeError:
+                existing_data = []
+    else:
+        existing_data = []
+
+    existing_data.extend(apartments)
 
     with open(APARTMENT_FILE_PATH, mode="w") as afp:
-        json.dump(apartments, afp)
+        json.dump(existing_data, afp, indent=4)
 
 
 def get_all_apartments() -> list[dict]:

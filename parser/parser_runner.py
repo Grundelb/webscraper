@@ -5,7 +5,7 @@ from dataclasses import asdict
 import logging
 
 
-def execute_parser():
+def execute_parser(city_path):
     logging.basicConfig(level=logging.INFO, filename="scraper_log.log", filemode="w",
                         format="%(asctime)s %(levelname)s %(message)s")
     page_number = 1
@@ -16,7 +16,7 @@ def execute_parser():
     logging.info(f"URL: {HalooglasiScraper.SEARCH_URL}")
     while True:
         logging.info(f"Page number: {page_number}\n")
-        response = connector.load_listing_page(page_number)
+        response = connector.load_listing_page(page_number, city_path)
         new_data = scraper.fetch_apartment_listings(response)
 
         if not new_data:
@@ -36,4 +36,6 @@ def execute_parser():
     logging.info(f"Apartments added: {len(apartment_list)}")
     logging.info("Execution completed")
 
-execute_parser()
+
+execute_parser('/novi-sad')
+execute_parser('/beograd')
