@@ -32,12 +32,9 @@ class FilterApartments:
                                              and min_price <= apartment['price'] <= max_price,
                            apartments))
 
-    def lazy_load_apartments(self, apartments, batch_size=10):
-        for i in range(0, len(apartments), batch_size):
-            yield apartments[i:i + batch_size]
-
     def execute_filter(self, city, min_price, max_price, rooms):
         apartments = get_all_apartments()
         cleared_apartments = self._prepare_data_for_filtering(apartments)
         filtered_apartments = self._filter_apartments(city, min_price, max_price, rooms, cleared_apartments)
-        return self.lazy_load_apartments(filtered_apartments)
+        return filtered_apartments
+
