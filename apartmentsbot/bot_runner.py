@@ -30,15 +30,15 @@ def start_filter(message: types.Message, state: StateContext):
 
 @bot.message_handler(state=MyStates.city, text=["Novi Sad", "Beograd"])
 def min_price_get(message: types.Message, state: StateContext):
-    bot_handler.min_price_get(message, state)
+    bot_handler.price_get(message, state)
 
 
-@bot.message_handler(state=MyStates.min_price, is_digit=True)
+@bot.message_handler(state=MyStates.price, is_digit=True)
 def max_price_get(message: types.Message, state: StateContext):
-    bot_handler.max_price_get(message, state)
+    bot_handler.area_get(message, state)
 
 
-@bot.message_handler(state=MyStates.max_price, is_digit=True)
+@bot.message_handler(state=MyStates.area, is_digit=True)
 def rooms_number_get(message: types.Message, state: StateContext):
     bot_handler.rooms_number_get(message, state)
 
@@ -58,7 +58,7 @@ def get_more_apartments(message: types.Message):
     bot_handler.get_more_apartments(message)
 
 
-@bot.message_handler(state=[MyStates.max_price, MyStates.min_price], is_digit=False)
+@bot.message_handler(state=[MyStates.area, MyStates.price], is_digit=False)
 def price_incorrect(message: types.Message):
     bot.send_message(
         message.chat.id,

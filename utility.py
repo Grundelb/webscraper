@@ -1,9 +1,15 @@
 import json
 import logging
 import os
+from parser.apartment import Apartment
 
 
 APARTMENT_FILE_PATH = os.path.relpath("apartment_data.json")
+
+
+def clear_list_of_apartments_before_execute():
+    with open(APARTMENT_FILE_PATH, mode="w") as afp:
+        afp.write("[]")
 
 
 def save_list_of_apartments(apartments: list) -> None:
@@ -24,7 +30,7 @@ def save_list_of_apartments(apartments: list) -> None:
         json.dump(existing_data, afp, indent=4)
 
 
-def get_all_apartments() -> list[dict]:
+def get_all_apartments() -> list[Apartment]:
     with open(APARTMENT_FILE_PATH, encoding="utf-8") as afp:
         return json.load(afp)
 

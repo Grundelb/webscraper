@@ -29,17 +29,19 @@ class BotHandler:
             reply_markup=keyboard
         )
 
-    def min_price_get(self, message, state):
-        state.set(MyStates.min_price)
-        self.bot.send_message(message.chat.id, "What is min price (EUR)?",
+    def price_get(self, message, state):
+        state.set(MyStates.price)
+        self.bot.send_message(message.chat.id,
+                              "What is the maximum price you are willing to pay for an apartment (in EUR)?",
                               reply_parameters=ReplyParameters(message_id=message.message_id))
         state.add_data(city=message.text)
 
-    def max_price_get(self, message, state):
-        state.set(MyStates.max_price)
-        self.bot.send_message(message.chat.id, "What is max price (EUR)?",
+    def area_get(self, message, state):
+        state.set(MyStates.area)
+        self.bot.send_message(message.chat.id,
+                              "What is the minimum apartment size you are looking for (in square meters)?",
                               reply_parameters=ReplyParameters(message_id=message.message_id))
-        state.add_data(min_price=message.text)
+        state.add_data(price=message.text)
 
     def rooms_number_get(self, message, state):
         state.set(MyStates.rooms)
@@ -52,7 +54,7 @@ class BotHandler:
             "How many rooms do you looking for? Choose from the options below.",
             reply_markup=keyboard, reply_parameters=ReplyParameters(message_id=message.message_id)
         )
-        state.add_data(max_price=message.text)
+        state.add_data(area=message.text)
 
     def filter_finish(self, message, state):
         state.set(MyStates.next_data)
@@ -68,11 +70,11 @@ class BotHandler:
     def get_apartments(self, message, state):
         with state.data() as data:
             city = data.get("city")
-            min_price = int(data.get("min_price"))
-            max_price = int(data.get("max_price"))
+            price = int(data.get("price"))
+            area = int(data.get("area"))
             rooms = int(data.get("rooms"))
 
-        self.apartment_manager.load_apartments(city, min_price, max_price, rooms)
+        self.apartment_manager.load_apartments(city, area, price, rooms)
         self.send_apartment_batch(message)
 
     def get_more_apartments(self, message):
@@ -85,10 +87,12 @@ class BotHandler:
                 self.bot.send_message(
                     message.chat.id,
                     f"Title: {apartment['title']}\n"
+                    f"Date: {apartment['date']}\n"
                     f"City: {apartment['city']}\n"
                     f"District: {apartment['district']}\n"
                     f"Price: {apartment['price']} EUR\n"
                     f"Rooms: {apartment['rooms']}\n"
+                    f"Area: {apartment['area']}\n"
                     f"Link: {apartment['link']}"
                 )
             if self.apartment_manager.has_more():

@@ -1,6 +1,6 @@
 from parser.network_connector import NetworkConnector
 from parser.scraper_halooglasi import HalooglasiScraper
-from utility import save_list_of_apartments
+from utility import save_list_of_apartments, clear_list_of_apartments_before_execute
 from dataclasses import asdict
 import logging
 
@@ -37,5 +37,6 @@ def execute_parser(city_path):
     logging.info("Execution completed")
 
 
+clear_list_of_apartments_before_execute()
 execute_parser('/novi-sad')
 execute_parser('/beograd')
