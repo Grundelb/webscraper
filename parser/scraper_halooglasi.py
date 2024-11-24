@@ -17,7 +17,7 @@ class HalooglasiScraper(AbstractScraper):
     def get_apartment_title(self, apartment) -> Optional[str]:
         product_title = apartment.find('h3', class_='product-title')
         if product_title:
-            return product_title.find('a').text.strip()
+            return product_title.find('a').get_text(strip=True)
         raise ApartmentParseError(f"Title is not found for {product_title}")
 
     @suppress(ApartmentParseError, "Link not found")
@@ -33,7 +33,8 @@ class HalooglasiScraper(AbstractScraper):
         features_items = product_features.find_all('li', class_='col-p-1-3')
         rooms_div = features_items[1].find('div', class_='value-wrapper')
         if rooms_div:
-            return int(rooms_div.get_text().replace('Broj soba', '')[0])
+            # Index 0 trims the string containing the number of rooms, leaving only the number (the first digit).
+            return int(rooms_div.get_text(strip=True).replace('Broj soba', '')[0])
         raise ApartmentParseError(f"Rooms are not found for {product_features}")
 
     @suppress(ApartmentParseError, "City not found")
@@ -41,6 +42,7 @@ class HalooglasiScraper(AbstractScraper):
         subtitle_places = apartment.find('ul', class_='subtitle-places')
         places_items = subtitle_places.find_all('li')
         if places_items:
+            # Index 0 corresponds to the city in the subtitle_places list.
             return [item.get_text(strip=True) for item in places_items if item.get_text(strip=True)][0]
         raise ApartmentParseError(f"City is not found for {subtitle_places}")
 
@@ -48,16 +50,17 @@ class HalooglasiScraper(AbstractScraper):
     def get_apartment_district(self, apartment) -> Optional[str]:
         subtitle_places = apartment.find('ul', class_='subtitle-places')
         places_items = subtitle_places.find_all('li')
-        places = [item.get_text(strip=True) for item in places_items if item.get_text(strip=True)]
-        if places:
-            return places[2]
+        if places_items:
+            # Index 2 corresponds to the district in the subtitle_places list.
+            return [item.get_text(strip=True) for item in places_items if item.get_text(strip=True)][2]
         raise ApartmentParseError(f"District is not found for {subtitle_places}")
 
     @suppress(ApartmentParseError, "Price not found")
     def get_apartment_price(self, apartment) -> Optional[int]:
         price_tag = apartment.find('div', class_='central-feature')
         if price_tag:
-            return int(price_tag.find('span').text.replace('\u00a0', '').replace('€', '').replace('.', '').strip())
+            return int(
+                price_tag.find('span').get_text(strip=True).replace('\u00a0', '').replace('€', '').replace('.', ''))
         raise ApartmentParseError(f"Price is not found for {price_tag}")
 
     @suppress(ApartmentParseError, "Failed to get apartment area")
@@ -66,12 +69,13 @@ class HalooglasiScraper(AbstractScraper):
         features_items = product_features.find_all('li', class_='col-p-1-3')
         area_div = features_items[0].find('div', class_='value-wrapper')
         if area_div:
-            return int(area_div.get_text(strip=True).replace('\xa0m2Kvadratura', '').strip())
+            return float(area_div.get_text(strip=True).replace('\xa0m2Kvadratura', '').replace(',', '.'))
         raise ApartmentParseError(f"Apartment area not found for {area_div}")
 
     @suppress(ApartmentParseError, "Failed to get apartment posting date")
-    def get_apartment_date(self, apartment) -> Optional[str]:
+    def get_apartment_date(self, apartment) -> str:
         date_tag = apartment.find('span', class_='publish-date')
         if date_tag:
-            return date_tag.get_text(strip=True)
+            # Trimming the last char in the string: `.`
+            return date_tag.get_text(strip=True)[:-1]
         raise ApartmentParseError(f"Posting date not found for {date_tag}")

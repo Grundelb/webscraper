@@ -10,4 +10,4 @@ class Apartment:
     district: str
     price: int
     date: str
-    area: int
+    area: float

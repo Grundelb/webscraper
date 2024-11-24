@@ -27,6 +27,7 @@ def execute_parser(city_path):
         for apartment in fetch_data:
             apartment_list.append(asdict(apartment))
 
+        # The number of listings on the page is 20 if more listings are available.
         if len(fetch_data) >= 20:
             page_number += 1
         else:

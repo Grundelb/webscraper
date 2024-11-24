@@ -1,22 +1,24 @@
 import json
 import logging
 import os
+import yaml
 from parser.apartment import Apartment
 
 
-APARTMENT_FILE_PATH = os.path.relpath("apartment_data.json")
+FILE_PATH_APARTMENT = os.path.relpath("apartment_data.json")
+FILE_PATH_CONFIG = os.path.relpath("config.yaml")
 
 
 def clear_list_of_apartments_before_execute():
-    with open(APARTMENT_FILE_PATH, mode="w") as afp:
+    with open(FILE_PATH_APARTMENT, mode="w") as afp:
         afp.write("[]")
 
 
 def save_list_of_apartments(apartments: list) -> None:
     """Save an apartment list into a JSON file by appending to an existing list."""
 
-    if os.path.exists(APARTMENT_FILE_PATH):
-        with open(APARTMENT_FILE_PATH, mode="r") as afp:
+    if os.path.exists(FILE_PATH_APARTMENT):
+        with open(FILE_PATH_APARTMENT) as afp:
             try:
                 existing_data = json.load(afp)
             except json.JSONDecodeError:
@@ -26,16 +28,16 @@ def save_list_of_apartments(apartments: list) -> None:
 
     existing_data.extend(apartments)
 
-    with open(APARTMENT_FILE_PATH, mode="w") as afp:
-        json.dump(existing_data, afp, indent=4)
+    with open(FILE_PATH_APARTMENT, mode="w") as afp:
+        json.dump(existing_data, afp)
 
 
 def get_all_apartments() -> list[Apartment]:
-    with open(APARTMENT_FILE_PATH, encoding="utf-8") as afp:
+    with open(FILE_PATH_APARTMENT) as afp:
         return json.load(afp)
 
 
-def suppress(exception: Exception, error_msg: str):
+def suppress(exception: tuple[Exception], error_msg: str):
     """A decorator to catch exceptions, log a message, and return None."""
 
     def decorator(func):
@@ -50,3 +52,8 @@ def suppress(exception: Exception, error_msg: str):
         return new_func
 
     return decorator
+
+
+def load_config():
+    with open(FILE_PATH_CONFIG) as config_file:
+        return yaml.safe_load(config_file)

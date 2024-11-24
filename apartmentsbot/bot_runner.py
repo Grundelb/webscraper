@@ -3,16 +3,16 @@ from telebot import custom_filters, types
 from telebot.states.sync.context import StateContext
 from apartmentsbot.apartment_manager import state_storage, MyStates
 from apartmentsbot.bot_handler import BotHandler
+from apartmentsbot.bot_messages import BotMessages
+from utility import load_config
 import logging
 import telebot
-import configparser
 
 logging.basicConfig(level=logging.INFO, filename="apartment_bot.log", filemode="w",
                     format="%(asctime)s %(levelname)s %(message)s")
 
-config = configparser.ConfigParser()
-config.read("config.ini")
-API_TOKEN = config.get("bot", "API_TOKEN")
+config = load_config()
+API_TOKEN = config["bot"]["API_TOKEN"]
 
 bot = telebot.TeleBot(API_TOKEN, state_storage=state_storage, use_class_middlewares=True)
 bot_handler = BotHandler(bot)
@@ -29,12 +29,12 @@ def start_filter(message: types.Message, state: StateContext):
 
 
 @bot.message_handler(state=MyStates.city, text=["Novi Sad", "Beograd"])
-def min_price_get(message: types.Message, state: StateContext):
+def price_get(message: types.Message, state: StateContext):
     bot_handler.price_get(message, state)
 
 
 @bot.message_handler(state=MyStates.price, is_digit=True)
-def max_price_get(message: types.Message, state: StateContext):
+def area_get(message: types.Message, state: StateContext):
     bot_handler.area_get(message, state)
 
 
@@ -61,8 +61,7 @@ def get_more_apartments(message: types.Message):
 @bot.message_handler(state=[MyStates.area, MyStates.price], is_digit=False)
 def price_incorrect(message: types.Message):
     bot.send_message(
-        message.chat.id,
-        "Please enter a valid number."
+        message.chat.id, BotMessages.ERROR_INVALID_NUMBER
     )
 
 
