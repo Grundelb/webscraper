@@ -57,8 +57,10 @@ class AbstractScraper(ABC):
             district = self.get_apartment_district(apartment)
             rooms = self.get_rooms_number(apartment)
             price = self.get_apartment_price(apartment)
+            area = self.get_apartment_area(apartment)
+            date = self.get_apartment_date(apartment)
 
-            apartment_obj = Apartment(title, link_to_apartment, rooms, city, district, price)
+            apartment_obj = Apartment(title, link_to_apartment, rooms, city, district, price, date, area)
             apartments_data.append(apartment_obj)
 
         return apartments_data
