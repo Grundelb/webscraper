@@ -5,7 +5,9 @@ from dataclasses import dataclass
 class Apartment:
     title: str
     link: str
-    rooms: str
+    rooms: int
     city: str
     district: str
-    price: str
+    price: int
+    date: str
+    area: float
