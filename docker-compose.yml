@@ -1,0 +1,38 @@
+services:
+  bot:
+    build:
+      context: .
+    container_name: webscraper_bot
+    command: ["python", "apartmentsbot/bot_runner.py"]
+    restart: always
+    environment:
+      - ENV=production
+    volumes:
+      - .:/app
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  parser:
+    build:
+      context: .
+    container_name: webscraper_parser
+    command: ["python", "parser/parser_runner.py"]
+    restart: on-failure
+    environment:
+      - ENV=production
+    volumes:
+      - .:/app
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  scheduler:
+    image: alpine:latest
+    container_name: webscraper_scheduler
+    command: >
+      sh -c "while true; do sleep 7200 && docker-compose run --rm parser; done"
+    depends_on:
+      - parser
