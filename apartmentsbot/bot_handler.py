@@ -1,7 +1,7 @@
 from telebot import types
 from telebot.types import ReplyParameters
 from apartmentsbot.apartment_manager import ApartmentManager, MyStates
-from apartmentsbot.bot_messages import BotMessages
+import apartmentsbot.bot_messages
 
 
 class BotHandler:
@@ -12,7 +12,7 @@ class BotHandler:
 
     def start_help_message(self, message):
         self.bot.send_message(
-            message.chat.id, BotMessages.MESSAGE_HELLO
+            message.chat.id, apartmentsbot.bot_messages.MESSAGE_HELLO
         )
 
     def start_filter_get_city(self, message, state):
@@ -23,21 +23,21 @@ class BotHandler:
         buttons = [types.KeyboardButton(city) for city in cities]
         keyboard.add(*buttons)
         self.bot.send_message(
-            message.chat.id, BotMessages.PROMPT_ASK_CITY,
+            message.chat.id, apartmentsbot.bot_messages.PROMPT_ASK_CITY,
             reply_markup=keyboard
         )
 
     def price_get(self, message, state):
         state.set(MyStates.price)
         self.bot.send_message(message.chat.id,
-                              BotMessages.PROMPT_ASK_MAX_PRICE,
+                              apartmentsbot.bot_messages.PROMPT_ASK_MAX_PRICE,
                               reply_parameters=ReplyParameters(message_id=message.message_id))
         state.add_data(city=message.text)
 
     def area_get(self, message, state):
         state.set(MyStates.area)
         self.bot.send_message(message.chat.id,
-                              BotMessages.PROMPT_ASK_MIN_AREA,
+                              apartmentsbot.bot_messages.PROMPT_ASK_MIN_AREA,
                               reply_parameters=ReplyParameters(message_id=message.message_id))
         state.add_data(price=message.text)
 
@@ -49,7 +49,7 @@ class BotHandler:
         keyboard.add(*buttons)
         self.bot.send_message(
             message.chat.id,
-            BotMessages.PROMPT_ASK_ROOMS,
+            apartmentsbot.bot_messages.PROMPT_ASK_ROOMS,
             reply_markup=keyboard, reply_parameters=ReplyParameters(message_id=message.message_id)
         )
         state.add_data(area=message.text)
@@ -60,7 +60,7 @@ class BotHandler:
         keyboard.add("GET APARTMENTS")
         self.bot.send_message(
             message.chat.id,
-            BotMessages.PROMPT_GET_APARTMENTS,
+            apartmentsbot.bot_messages.PROMPT_GET_APARTMENTS,
             reply_markup=keyboard, reply_parameters=ReplyParameters(message_id=message.message_id)
         )
         state.add_data(rooms=message.text)
@@ -96,20 +96,20 @@ class BotHandler:
             if self.apartment_manager.has_more():
                 self.bot.send_message(
                     message.chat.id,
-                    BotMessages.PROMPT_GET_MORE_APARTMENTS,
+                    apartmentsbot.bot_messages.PROMPT_GET_MORE_APARTMENTS,
                     reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).add("GET MORE")
                 )
             else:
-                self.bot.send_message(message.chat.id, BotMessages.MESSAGE_NO_APARTMENTS,
+                self.bot.send_message(message.chat.id, apartmentsbot.bot_messages.MESSAGE_NO_APARTMENTS,
                                       reply_parameters=ReplyParameters(message_id=message.message_id))
         else:
-            self.bot.send_message(message.chat.id, BotMessages.MESSAGE_NO_APARTMENTS,
+            self.bot.send_message(message.chat.id, apartmentsbot.bot_messages.MESSAGE_NO_APARTMENTS,
                                   reply_parameters=ReplyParameters(message_id=message.message_id))
 
     def any_state(self, message, state):
         state.delete()
         self.bot.send_message(
             message.chat.id,
-            BotMessages.MESSAGE_CLEAR_STATES,
+            apartmentsbot.bot_messages.MESSAGE_CLEAR_STATES,
             reply_parameters=ReplyParameters(message_id=message.message_id),
         )

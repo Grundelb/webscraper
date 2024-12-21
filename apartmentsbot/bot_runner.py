@@ -3,8 +3,8 @@ from telebot import custom_filters, types
 from telebot.states.sync.context import StateContext
 from apartmentsbot.apartment_manager import state_storage, MyStates
 from apartmentsbot.bot_handler import BotHandler
-from apartmentsbot.bot_messages import BotMessages
 from utility import load_config
+import apartmentsbot.bot_messages
 import logging
 import telebot
 
@@ -61,7 +61,7 @@ def get_more_apartments(message: types.Message):
 @bot.message_handler(state=[MyStates.area, MyStates.price], is_digit=False)
 def price_incorrect(message: types.Message):
     bot.send_message(
-        message.chat.id, BotMessages.ERROR_INVALID_NUMBER
+        message.chat.id, apartmentsbot.bot_messages.ERROR_INVALID_NUMBER
     )
 
 
